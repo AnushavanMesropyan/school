@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class ScheduleListController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -13,7 +14,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-     //   $this->middleware('auth');
+           $this->middleware('auth');
     }
 
     /**
@@ -23,7 +24,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        //php artisan make:policy ScheduleListPolicy
+        $list = Schedule::with(['classRoom'])->where('teacher_id','=',auth()->id())->get();
+        return view('scheduleList',compact('list'));
     }
 
 

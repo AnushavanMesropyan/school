@@ -13,14 +13,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+/*Route::get('/', function () {
     return view('welcome');
 });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');*/
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\ScheduleListController::class, 'index'])->name('scheduleList');
+Route::group(['namespace' => 'App\Http\Controllers\Admin','prefix' => 'admin'], function () {
+    Route::get('/login', [App\Http\Controllers\Admin\AdminAuthController::class, 'loginShow'])->name('admin.loginShow');
+    Route::post('/login', [App\Http\Controllers\Admin\AdminAuthController::class, 'login'])->name('admin.login');
+    Route::post('/logout', [App\Http\Controllers\Admin\AdminAuthController::class, 'logout'])->name('admin.logout');
+    Route::group(['middleware' => ['admin']], function () {
+        Route::get('/', [App\Http\Controllers\Admin\AdminController::class, 'adminView'])->name('admin.view');
+        Route::resource('class-room', 'ClassRoomController');
+        Route::resource('teacher', 'TeacherController');
+        Route::resource('schedule', 'ScheduleController');
+    });
+});
